@@ -10,7 +10,7 @@ import javax.validation.constraints.NotBlank;
 @Data
 @Builder
 @AllArgsConstructor
-public class ItemDto {
+public class NewItemDto {
     @NotBlank(message = "Название предмета не может быть пустым.")
     private String name;
     @NotBlank(message = "Описание предмета не может быть пустым.")

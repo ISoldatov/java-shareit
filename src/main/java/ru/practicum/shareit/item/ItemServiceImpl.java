@@ -3,8 +3,9 @@ package ru.practicum.shareit.item;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.dto.NewItemDto;
 import ru.practicum.shareit.item.dto.ItemMapper;
+import ru.practicum.shareit.item.dto.UpdItemDto;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.UserRepository;
 import ru.practicum.shareit.util.ValidationUtil;
@@ -26,29 +27,29 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public Item add(ItemDto itemDto, int ownerId) {
-        log.info("ItemService: add({},{})", itemDto, ownerId);
-        Item item = ItemMapper.toItem(itemDto, ownerId);
-        ValidationUtil.checkFound(item.getId(), String.valueOf(item.getId()));
+    public Item add(NewItemDto newItemDto, int ownerId) {
+        log.info("ItemService: add({},{})", newItemDto, ownerId);
+        Item item = ItemMapper.toItem(newItemDto, ownerId);
+        //ValidationUtil.checkFound(item.getId(), String.valueOf(item.getId()));
         ValidationUtil.checkNotFound(userRepository.get(ownerId), String.valueOf(ownerId));
         return itemRepository.save(item);
     }
 
     @Override
-    public Item update(ItemDto itemDto, int itemId, int ownerId) {
-        log.info("ItemService: update({},{}, {})", itemDto, itemId, ownerId);
+    public Item update(UpdItemDto updItemDto, int itemId, int ownerId) {
+        log.info("ItemService: update({},{}, {})", updItemDto, itemId, ownerId);
         Item myItem = ValidationUtil.checkNotFound(get(itemId), "item");
         if (ownerId != myItem.getOwnerId()) {
-            throw new NotFoundException("Пользователь не является владельцем вещи.");
+            throw new NotFoundException("Пользователь не является владельцем.");
         }
-        if (itemDto.getName() != null) {
-            myItem.setName(itemDto.getName());
+        if (updItemDto.getName() != null) {
+            myItem.setName(updItemDto.getName());
         }
-        if (itemDto.getDescription() != null) {
-            myItem.setDescription(itemDto.getDescription());
+        if (updItemDto.getDescription() != null) {
+            myItem.setDescription(updItemDto.getDescription());
         }
-        if (itemDto.getAvailable() != null) {
-            myItem.setAvailable(itemDto.getAvailable());
+        if (updItemDto.getAvailable() != null) {
+            myItem.setAvailable(updItemDto.getAvailable());
         }
         return itemRepository.update(myItem);
     }
