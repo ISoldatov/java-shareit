@@ -10,7 +10,6 @@ public interface ItemRepository {
 
     Item update(Item item);
 
-
     Item get(int itemId);
 
     List<Item> getOwnerItems(int ownerId);

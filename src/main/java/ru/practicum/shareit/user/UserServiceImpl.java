@@ -1,16 +1,17 @@
 package ru.practicum.shareit.user;
 
-
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ru.practicum.shareit.user.dto.UserDto;
+import ru.practicum.shareit.user.dto.NewUserDto;
+import ru.practicum.shareit.user.dto.UpdUserDto;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.util.exception.FoundException;
 
 import java.util.List;
 
 import static ru.practicum.shareit.util.ValidationUtil.*;
+import static ru.practicum.shareit.user.dto.UserMapper.*;
 
 @Slf4j
 @Service
@@ -24,26 +25,25 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User add(User user) {
-        log.info("UserService: add({})", user);
-        checkFound(user.getId(), String.valueOf(user.getId()));
-        checkFound(userRepository.getByEmail(user.getEmail()), user.getEmail());
-        return userRepository.save(user);
+    public User add(NewUserDto newUserDto) {
+        log.info("UserService: add({})", newUserDto);
+        checkFound(userRepository.getByEmail(newUserDto.getEmail()), newUserDto.getEmail());
+        return userRepository.save(toUser(newUserDto));
     }
 
     @Override
-    public User update(UserDto userDto, int userId) {
-        log.info("UserService: update({},{})", userDto, userId);
-        User myUser = checkNotFoundWithId(get(userId), userId, "user");
-        if (userDto.getName() != null) {
-            myUser.setName(userDto.getName());
+    public User update(UpdUserDto updUserDto, int userId) {
+        log.info("UserService: update({},{})", updUserDto, userId);
+        User myUser = get(userId);
+        if (updUserDto.getName() != null) {
+            myUser.setName(updUserDto.getName());
         }
-        if (userDto.getEmail() != null) {
-            User existMailUser = userRepository.getByEmail(userDto.getEmail());
-            if (existMailUser != null && !existMailUser.getId().equals(userId)) {
-                throw new FoundException(String.format("Email %s уже существует.", userDto.getEmail()));
+        if (updUserDto.getEmail() != null) {
+            User userWithSameMail = userRepository.getByEmail(updUserDto.getEmail());
+            if (userWithSameMail != null && !userWithSameMail.getId().equals(userId)) {
+                throw new FoundException(String.format("Email %s уже существует.", updUserDto.getEmail()));
             }
-            myUser.setEmail(userDto.getEmail());
+            myUser.setEmail(updUserDto.getEmail());
         }
         return userRepository.update(myUser);
     }

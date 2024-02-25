@@ -14,7 +14,6 @@ import java.util.Map;
 @RestControllerAdvice
 public class ErrorHandler {
 
-
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public Map<String, String> handleValidation(final ValidationException e) {

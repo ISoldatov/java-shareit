@@ -51,7 +51,6 @@ public class UserRepositoryImpl implements UserRepository {
                 .filter(user -> user.getEmail().equals(email))
                 .findFirst()
                 .orElse(null);
-
     }
 
     @Override

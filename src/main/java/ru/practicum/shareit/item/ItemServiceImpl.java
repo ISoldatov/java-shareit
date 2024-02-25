@@ -29,16 +29,14 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public Item add(NewItemDto newItemDto, int ownerId) {
         log.info("ItemService: add({},{})", newItemDto, ownerId);
-        Item item = ItemMapper.toItem(newItemDto, ownerId);
-        //ValidationUtil.checkFound(item.getId(), String.valueOf(item.getId()));
         ValidationUtil.checkNotFound(userRepository.get(ownerId), String.valueOf(ownerId));
-        return itemRepository.save(item);
+        return itemRepository.save(ItemMapper.toItem(newItemDto, ownerId));
     }
 
     @Override
     public Item update(UpdItemDto updItemDto, int itemId, int ownerId) {
         log.info("ItemService: update({},{}, {})", updItemDto, itemId, ownerId);
-        Item myItem = ValidationUtil.checkNotFound(get(itemId), "item");
+        Item myItem = get(itemId);
         if (ownerId != myItem.getOwnerId()) {
             throw new NotFoundException("Пользователь не является владельцем.");
         }

@@ -6,7 +6,7 @@ import ru.practicum.shareit.util.exception.NotFoundException;
 public final class ValidationUtil {
 
     public static <T> T checkNotFoundWithId(T object, int id, String entity) {
-        checkNotFoundWithId(object != null, id, entity);
+        checkNotFound(object != null, entity + " с id=" + id);
         return object;
     }
 
@@ -34,5 +34,4 @@ public final class ValidationUtil {
             throw new FoundException(msg + " уже существует.");
         }
     }
-
 }
