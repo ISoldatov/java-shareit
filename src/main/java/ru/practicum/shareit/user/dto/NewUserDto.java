@@ -11,8 +11,7 @@ import javax.validation.constraints.Size;
 @Data
 @RequiredArgsConstructor
 public class NewUserDto {
-
-    @NotBlank(message = "Имя не может бвть пустым.")
+    @NotBlank(message = "Имя не может быть пустым.")
     @Size(min = 4, max = 20, message = "Длина имени должна быть от 4 до 20 символов.")
     private final String name;
 
