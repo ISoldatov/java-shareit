@@ -31,7 +31,7 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public ItemDto add(ItemDto itemDto, int ownerId) {
         log.info("ItemService: add({},{})", itemDto, ownerId);
-        checkNotFound(userRepository.get(ownerId), String.valueOf(ownerId));
+        checkNotFound(userRepository.getReferenceById(ownerId), String.valueOf(ownerId));
         return mapToItemDto(itemRepository.save(mapToItem(itemDto, null, null)));
     }
 
@@ -63,7 +63,7 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public List<ItemDto> getOwnerItems(int ownerId) {
         log.info("ItemService: getOwnerItems({})", ownerId);
-        checkNotFound(userRepository.get(ownerId), String.valueOf(ownerId));
+        checkNotFound(userRepository.getReferenceById(ownerId), String.valueOf(ownerId));
         return itemRepository.getOwnerItems(ownerId).stream()
                 .map(ItemMapper::mapToItemDto)
                 .collect(Collectors.toList());
