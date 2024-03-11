@@ -4,7 +4,6 @@ import lombok.*;
 
 @Data
 @Builder
-@AllArgsConstructor
 public class Item {
     private Integer id;
     private String name;
