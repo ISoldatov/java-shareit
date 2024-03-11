@@ -28,7 +28,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto add(UserDto userDto) {
         log.info("UserService: add({})", userDto);
-        checkFound(userRepository.getByEmail(userDto.getEmail()), userDto.getEmail());
+        checkEmail(userDto.getEmail(), userDto.getId());
         return UserMapper.mapToUserDto(userRepository.save(UserMapper.mapToUser(userDto)));
     }
 
@@ -41,10 +41,7 @@ public class UserServiceImpl implements UserService {
         }
         String userDtoEmail = userDto.getEmail();
         if (userDtoEmail != null) {
-            User userWithSameMail = userRepository.getByEmail(userDtoEmail);
-            if (userWithSameMail != null && !userWithSameMail.getId().equals(userDto.getId())) {
-                throw new FoundException(String.format("Email %s уже существует.", userDtoEmail));
-            }
+            checkEmail(userDtoEmail, userDto.getId());
             userInBase.setEmail(userDtoEmail);
         }
         return mapToUserDto(userRepository.update(userInBase));
@@ -68,5 +65,12 @@ public class UserServiceImpl implements UserService {
         return userRepository.getAll().stream()
                 .map(UserMapper::mapToUserDto)
                 .collect(Collectors.toList());
+    }
+
+    private void checkEmail(String email, Integer userId) {
+        User userWithSameMail = userRepository.getByEmail(email);
+        if (userWithSameMail != null && !userWithSameMail.getId().equals(userId)) {
+            throw new FoundException(String.format("Email %s уже существует.", email));
+        }
     }
 }
