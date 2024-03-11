@@ -32,14 +32,14 @@ public class ItemServiceImpl implements ItemService {
     public ItemDto add(ItemDto itemDto, int ownerId) {
         log.info("ItemService: add({},{})", itemDto, ownerId);
         checkNotFound(userRepository.get(ownerId), String.valueOf(ownerId));
-        return mapToItemDto(itemRepository.save(mapToItem(itemDto, ownerId)));
+        return mapToItemDto(itemRepository.save(mapToItem(itemDto, null, null)));
     }
 
     @Override
     public ItemDto update(ItemDto itemDto, int itemId, int ownerId) {
         log.info("ItemService: update({},{}, {})", itemDto, itemId, ownerId);
         Item itemInBase = itemRepository.get(itemId);
-        if (ownerId != itemInBase.getOwnerId()) {
+        if (ownerId != itemInBase.getOwner().getId()) {
             throw new NotFoundException("Пользователь не является владельцем.");
         }
         if (itemDto.getName() != null) {

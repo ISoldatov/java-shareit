@@ -42,7 +42,7 @@ public class ItemRepositoryImpl implements ItemRepository {
     public List<Item> getOwnerItems(int ownerId) {
         log.info("ItemRepository: getOwnerItems({})", ownerId);
         return storage.values().stream()
-                .filter(i -> i.getOwnerId().equals(ownerId))
+                .filter(i -> i.getOwner().getId().equals(ownerId))
                 .collect(Collectors.toList());
     }
 
