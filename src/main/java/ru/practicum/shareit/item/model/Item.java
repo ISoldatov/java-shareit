@@ -9,6 +9,8 @@ import javax.persistence.*;
 @Entity
 @Table(name = "items")
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Getter @Setter @ToString
 public class Item {
 
@@ -26,7 +28,7 @@ public class Item {
     private Boolean available;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "owner_id")
     @ToString.Exclude
     private User owner;
 
