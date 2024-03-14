@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import ru.practicum.shareit.util.exception.FoundException;
 import ru.practicum.shareit.util.exception.NotFoundException;
+import ru.practicum.shareit.util.exception.UnsupportedStateException;
 import ru.practicum.shareit.util.exception.ValidationException;
 
 import java.util.Map;
@@ -34,8 +35,15 @@ public class ErrorHandler {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleUnsupportedState(final UnsupportedStateException e) {
+        return new ErrorResponse("Unknown state: UNSUPPORTED_STATUS");
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     public Map<String, String> handleIllegalArgument(final IllegalArgumentException e) {
         return Map.of("Ошибка аргументов:", e.getMessage());
     }
+
 
 }
