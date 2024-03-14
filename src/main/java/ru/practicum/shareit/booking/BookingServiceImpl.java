@@ -3,6 +3,7 @@ package ru.practicum.shareit.booking;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.dto.BookingDto;
+import ru.practicum.shareit.booking.dto.BookingItemDto;
 import ru.practicum.shareit.booking.dto.BookingMapper;
 import ru.practicum.shareit.booking.dto.NewBookingDto;
 import ru.practicum.shareit.item.ItemRepository;
@@ -145,14 +146,14 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public BookingDto getLastItemBooking(int itemId, int ownerId) {
+    public BookingItemDto getLastItemBooking(int itemId, int ownerId) {
         Booking booking = bookingRepository.getLastItemBooking(itemId, ownerId);
-        return booking != null ? mapToBookingDto(booking) : null;
+        return booking != null ? mapToBookingItemDto(booking) : null;
     }
 
     @Override
-    public BookingDto getNextItemBooking(int itemId, int ownerId) {
+    public BookingItemDto getNextItemBooking(int itemId, int ownerId) {
         Booking booking = bookingRepository.getNextItemBooking(itemId, ownerId);
-        return booking != null ? mapToBookingDto(booking) : null;
+        return booking != null ? mapToBookingItemDto(booking) : null;
     }
 }

@@ -31,5 +31,9 @@ public final class BookingMapper {
                 .build();
     }
 
+    public static BookingItemDto mapToBookingItemDto(Booking booking) {
+        return new BookingItemDto(booking.getId(), booking.getBooker().getId());
+    }
+
 
 }

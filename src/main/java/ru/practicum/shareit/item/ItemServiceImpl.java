@@ -7,6 +7,7 @@ import ru.practicum.shareit.booking.Booking;
 import ru.practicum.shareit.booking.BookingRepository;
 import ru.practicum.shareit.booking.BookingService;
 import ru.practicum.shareit.booking.dto.BookingDto;
+import ru.practicum.shareit.booking.dto.BookingItemDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemMapper;
 import ru.practicum.shareit.item.model.Item;
@@ -75,8 +76,8 @@ public class ItemServiceImpl implements ItemService {
         if (item.getOwner().getId() != ownerId) {
             return mapToItemDto(item, null, null);
         }
-        BookingDto lastBooking = bookingService.getLastItemBooking(itemId, ownerId);
-        BookingDto nextBooking = bookingService.getNextItemBooking(itemId, ownerId);
+        BookingItemDto lastBooking = bookingService.getLastItemBooking(itemId, ownerId);
+        BookingItemDto nextBooking = bookingService.getNextItemBooking(itemId, ownerId);
         return mapToItemDto(item, lastBooking, nextBooking);
     }
 
@@ -84,12 +85,12 @@ public class ItemServiceImpl implements ItemService {
     public List<ItemDto> getOwnerItems(int ownerId) {
         log.info("ItemService: getOwnerItems({})", ownerId);
         checkNotFound(userRepository.getReferenceById(ownerId), String.valueOf(ownerId));
-        List<Item> items = itemRepository.findAllByOwnerId(ownerId).stream()
+        List<Item> items = itemRepository.findAllByOwnerIdOrderByIdAsc(ownerId).stream()
                 .collect(Collectors.toList());
         List<ItemDto> itemsDto = new ArrayList<>();
         for (Item i: items) {
-            BookingDto lastBooking = bookingService.getLastItemBooking(i.getId(), ownerId);
-            BookingDto nextBooking = bookingService.getNextItemBooking(i.getId(), ownerId);
+            BookingItemDto lastBooking = bookingService.getLastItemBooking(i.getId(), ownerId);
+            BookingItemDto nextBooking = bookingService.getNextItemBooking(i.getId(), ownerId);
             ItemDto itemDto = mapToItemDto(i, lastBooking, nextBooking);
             itemsDto.add(itemDto);
         }
