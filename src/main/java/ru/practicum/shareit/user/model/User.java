@@ -18,7 +18,7 @@ public class User {
     private Integer id;
     @Column(name = "name")
     private String name;
-    @Column(name = "email")
+    @Column(name = "email", unique = true)
     private String email;
 
     @Override

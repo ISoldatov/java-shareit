@@ -29,6 +29,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto add(UserDto userDto) {
         log.info("UserService: add({})", userDto);
+//        checkEmail(userDto.getEmail(), null);
         return UserMapper.mapToUserDto(userRepository.save(UserMapper.mapToUser(userDto)));
     }
 
@@ -74,5 +75,6 @@ public class UserServiceImpl implements UserService {
         if (userWithSameMail != null && !userWithSameMail.getId().equals(userId)) {
             throw new FoundException(String.format("Email %s уже существует.", email));
         }
+
     }
 }
