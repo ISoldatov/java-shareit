@@ -65,6 +65,13 @@ public class BookingServiceImpl implements BookingService {
         if (bookingInBase.getStatus() != BookingStatus.WAITING && approved) {
             throw new ValidationException(String.format("По заказу уже принято решение %s.", bookingInBase.getStatus().toString()));
         }
+//        if (approved) {
+//            bookingInBase.setStatus(BookingStatus.APPROVED);
+//        } else {
+//            bookingInBase.setStatus(BookingStatus.REJECTED);
+//            bookingInBase.setStart(null);
+//            bookingInBase.setEnd(null);
+//        }
         bookingInBase.setStatus(approved ? BookingStatus.APPROVED : BookingStatus.REJECTED);
         return mapToBookingDto(bookingRepository.save(bookingInBase));
     }
@@ -86,6 +93,7 @@ public class BookingServiceImpl implements BookingService {
         userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException(String.format("Пользователь c id=%d не найден.", userId)));
         List<Booking> bookings = new ArrayList<>();
+        LocalDateTime currentTime = LocalDateTime.now();
         try {
             BookingState bookingState = BookingState.valueOf(state);
             switch (bookingState) {
@@ -99,13 +107,13 @@ public class BookingServiceImpl implements BookingService {
                     bookings = bookingRepository.findAllByBookerIdAndStatusOrderByIdDesc(userId, BookingStatus.REJECTED);
                     break;
                 case PAST:
-                    bookings = bookingRepository.findAllByBookerIdAndEndBeforeOrderByIdDesc(userId, LocalDateTime.now());
+                    bookings = bookingRepository.findAllByBookerIdAndEndBeforeOrderByIdDesc(userId, currentTime);
                     break;
                 case CURRENT:
-                    bookings = bookingRepository.findAllByBookerIdAndStartBeforeAndEndAfterOrderByIdAsc(userId, LocalDateTime.now(), LocalDateTime.now());
+                    bookings = bookingRepository.findAllByBookerIdAndStartBeforeAndEndAfterOrderByIdAsc(userId, currentTime, currentTime);
                     break;
                 case FUTURE:
-                    bookings = bookingRepository.findAllByBookerIdAndStartAfterOrderByIdDesc(userId, LocalDateTime.now());
+                    bookings = bookingRepository.findAllByBookerIdAndStartAfterOrderByIdDesc(userId, currentTime);
                     break;
             }
         } catch (IllegalArgumentException e) {
@@ -127,8 +135,14 @@ public class BookingServiceImpl implements BookingService {
                 case ALL:
                     bookings = bookingRepository.getAllBookingsOwnerItems(ownerId);
                     break;
+                case PAST:
+                    bookings = bookingRepository.getPastBookingsItemsOwner(ownerId, LocalDateTime.now());
+                    break;
+                case CURRENT:
+                    bookings = bookingRepository.getCurrentBookingsItemsOwner(ownerId, LocalDateTime.now());
+                    break;
                 case FUTURE:
-                    bookings = bookingRepository.getFutureBookingsItemsOwner(ownerId);
+                    bookings = bookingRepository.getFutureBookingsItemsOwner(ownerId, LocalDateTime.now());
                     break;
                 case WAITING:
                     bookings = bookingRepository.getBookingsOwnerItemsByState(ownerId, BookingStatus.WAITING.toString());
@@ -146,14 +160,14 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public BookingItemDto getLastItemBooking(int itemId, int ownerId) {
-        Booking booking = bookingRepository.getLastItemBooking(itemId, ownerId);
+    public BookingItemDto getLastItemBooking(int itemId, int ownerId, LocalDateTime currentTime) {
+        Booking booking = bookingRepository.getLastItemBooking(itemId, currentTime);
         return booking != null ? mapToBookingItemDto(booking) : null;
     }
 
     @Override
-    public BookingItemDto getNextItemBooking(int itemId, int ownerId) {
-        Booking booking = bookingRepository.getNextItemBooking(itemId, ownerId);
+    public BookingItemDto getNextItemBooking(int itemId, int ownerId, LocalDateTime currentTime) {
+        Booking booking = bookingRepository.getNextItemBooking(itemId, currentTime);
         return booking != null ? mapToBookingItemDto(booking) : null;
     }
 }

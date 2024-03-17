@@ -4,6 +4,7 @@ import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingItemDto;
 import ru.practicum.shareit.booking.dto.NewBookingDto;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface BookingService {
@@ -18,7 +19,7 @@ public interface BookingService {
 
     List<BookingDto> getAllOwnerBookings(String state, int ownerId);
 
-    BookingItemDto getLastItemBooking(int itemId, int ownerId);
+    BookingItemDto getLastItemBooking(int itemId, int ownerId, LocalDateTime currentTime);
 
-    BookingItemDto getNextItemBooking(int itemId, int ownerId);
+    BookingItemDto getNextItemBooking(int itemId, int ownerId, LocalDateTime currentTime);
 }

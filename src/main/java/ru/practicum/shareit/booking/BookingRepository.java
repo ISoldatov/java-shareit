@@ -38,32 +38,46 @@ public interface BookingRepository extends JpaRepository<Booking, Integer> {
 
     @Query(value = "SELECT b.* " +
             "         FROM bookings b " +
-            "        INNER JOIN items i ON i.id = b.item_id AND i.owner_id =?1 " +
-            "        WHERE b.start_date > CURRENT_TIMESTAMP" +
+            "        INNER JOIN items i ON i.id = b.item_id AND i.owner_id =:ownerId " +
+            "        WHERE b.end_date < :dateTime" +
             "        ORDER BY b.id DESC;",
             nativeQuery = true)
-    List<Booking> getFutureBookingsItemsOwner(int ownerId);
+    List<Booking> getPastBookingsItemsOwner(int ownerId, LocalDateTime dateTime);
+
+    @Query(value = "SELECT b.* " +
+            "         FROM bookings b " +
+            "        INNER JOIN items i ON i.id = b.item_id AND i.owner_id =:ownerId " +
+            "        WHERE b.start_date > :dateTime" +
+            "        ORDER BY b.id DESC;",
+            nativeQuery = true)
+    List<Booking> getFutureBookingsItemsOwner(int ownerId, LocalDateTime dateTime);
+
+    @Query(value = "SELECT b.* " +
+            "         FROM bookings b " +
+            "        INNER JOIN items i ON i.id = b.item_id AND i.owner_id =:ownerId " +
+            "        WHERE :dateTime BETWEEN b.start_date AND b.end_date" +
+            "        ORDER BY b.id DESC;",
+            nativeQuery = true)
+    List<Booking> getCurrentBookingsItemsOwner(int ownerId, LocalDateTime dateTime);
 
     @Query(value = "SELECT b.*" +
             "         FROM bookings b" +
-            "        INNER JOIN items i ON i.id = b.item_id AND i.id=?1 " +
+            "        INNER JOIN items i ON i.id = b.item_id AND i.id=:itemId " +
             "        WHERE b.status !='REJECTED' " +
-            "          AND b.start_date < CURRENT_TIMESTAMP " +
-            "        ORDER BY b.id ASC " +
+            "          AND b.start_date < :dateTime " +
+            "        ORDER BY b.start_date DESC " +
             "        LIMIT 1;",
             nativeQuery = true)
-    Booking getLastItemBooking(int itemId, int ownerId);
+    Booking getLastItemBooking(int itemId, LocalDateTime dateTime);
 
     @Query(value = "SELECT b.*" +
             "         FROM bookings b" +
-            "        INNER JOIN items i ON i.id = b.item_id AND i.id=?1 " +
+            "        INNER JOIN items i ON i.id = b.item_id AND i.id= :itemId " +
             "        WHERE b.status !='REJECTED' " +
-            "          AND b.start_date > CURRENT_TIMESTAMP " +
-            "        ORDER BY b.id DESC " +
+            "          AND b.start_date > :dateTime " +
+            "        ORDER BY b.start_date ASC " +
             "        LIMIT 1;",
             nativeQuery = true)
-    Booking getNextItemBooking(int itemId, int ownerId);
-
-
+    Booking getNextItemBooking(int itemId, LocalDateTime dateTime);
 
 }
