@@ -11,26 +11,23 @@ import java.time.LocalDateTime;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Getter @Setter @ToString
+@Getter
+@Setter
+@ToString
 public class Comment {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-
-    @Column(name="text")
+    @Column(name = "text")
     private String text;
-
     @ManyToOne
     @JoinColumn(name = "item_id")
     @ToString.Exclude
     private Item item;
-
     @ManyToOne
     @JoinColumn(name = "author_id")
     @ToString.Exclude
     private User author;
-
-    @Column(name="created_date")
+    @Column(name = "created_date")
     private LocalDateTime created;
 }
