@@ -3,15 +3,11 @@ package ru.practicum.shareit.item;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ru.practicum.shareit.booking.Booking;
-import ru.practicum.shareit.booking.BookingRepository;
 import ru.practicum.shareit.booking.BookingService;
-import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingItemDto;
 import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.CommentMapper;
 import ru.practicum.shareit.item.dto.ItemDto;
-import ru.practicum.shareit.item.dto.ItemMapper;
 import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.UserRepository;
@@ -19,13 +15,14 @@ import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.util.exception.NotFoundException;
 import ru.practicum.shareit.util.exception.ValidationException;
 
-import static ru.practicum.shareit.item.dto.ItemMapper.*;
-import static ru.practicum.shareit.util.ValidationUtil.*;
-
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static ru.practicum.shareit.item.dto.ItemMapper.mapToItem;
+import static ru.practicum.shareit.item.dto.ItemMapper.mapToItemDto;
+import static ru.practicum.shareit.util.ValidationUtil.checkNotFound;
 
 @Slf4j
 @Service
@@ -120,7 +117,7 @@ public class ItemServiceImpl implements ItemService {
 
     private ItemDto getItemDtoWithBookingAndComments(Item item, int ownerId) {
         List<CommentDto> commentsDto = commentRepository.findAllByItemIdOrderByIdDesc(item.getId()).stream()
-                .map(comment -> CommentMapper.mapToCommentDto(comment))
+                .map(CommentMapper::mapToCommentDto)
                 .collect(Collectors.toList());
         if (item.getOwner().getId() != ownerId) {
             return mapToItemDto(item, null, null, commentsDto);

@@ -45,5 +45,4 @@ public class ErrorHandler {
         return Map.of("Ошибка аргументов:", e.getMessage());
     }
 
-
 }

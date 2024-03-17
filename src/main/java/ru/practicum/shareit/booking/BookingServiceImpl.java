@@ -65,13 +65,6 @@ public class BookingServiceImpl implements BookingService {
         if (bookingInBase.getStatus() != BookingStatus.WAITING && approved) {
             throw new ValidationException(String.format("По заказу уже принято решение %s.", bookingInBase.getStatus().toString()));
         }
-//        if (approved) {
-//            bookingInBase.setStatus(BookingStatus.APPROVED);
-//        } else {
-//            bookingInBase.setStatus(BookingStatus.REJECTED);
-//            bookingInBase.setStart(null);
-//            bookingInBase.setEnd(null);
-//        }
         bookingInBase.setStatus(approved ? BookingStatus.APPROVED : BookingStatus.REJECTED);
         return mapToBookingDto(bookingRepository.save(bookingInBase));
     }

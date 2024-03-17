@@ -13,7 +13,6 @@ import ru.practicum.shareit.util.exception.ValidationException;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static ru.practicum.shareit.util.ValidationUtil.*;
 import static ru.practicum.shareit.user.dto.UserMapper.*;
 
 @Slf4j
@@ -30,7 +29,6 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto add(UserDto userDto) {
         log.info("UserService: add({})", userDto);
-//        checkEmail(userDto.getEmail(), userDto.getId());
         return UserMapper.mapToUserDto(userRepository.save(UserMapper.mapToUser(userDto)));
     }
 
@@ -59,7 +57,6 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto get(int userId) {
         log.info("UserService: get({})", userId);
-//        return mapToUserDto(userRepository.getReferenceById(userId));
         return mapToUserDto(userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException(String.format("User c id=%d не найден.", userId))));
     }
