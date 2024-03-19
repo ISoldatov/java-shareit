@@ -37,8 +37,10 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public BookingDto add(NewBookingDto newBookingDto, int bookerId) {
-        User booker = userRepository.findById(bookerId)
-                .orElseThrow(() -> new NotFoundException(String.format("Пользователь c id=%d не найден.", bookerId)));
+        if (newBookingDto.getStart().isAfter(newBookingDto.getEnd()) ||
+                newBookingDto.getStart().isEqual(newBookingDto.getEnd())) {
+            throw new ValidationException("Дата начала аренды должна быть до даты ее окончания.");
+        }
         Item item = itemRepository.findById(newBookingDto.getItemId())
                 .orElseThrow(() -> new NotFoundException(String.format("Вещь c id=%d не найден.", newBookingDto.getItemId())));
         if (item.getOwner().getId() == bookerId) {
@@ -47,10 +49,8 @@ public class BookingServiceImpl implements BookingService {
         if (!item.getAvailable()) {
             throw new ValidationException("Вещь не доступна для аренды.");
         }
-        if (newBookingDto.getStart().isAfter(newBookingDto.getEnd()) ||
-                newBookingDto.getStart().isEqual(newBookingDto.getEnd())) {
-            throw new ValidationException("Дата начала аренды должна быть до даты ее окончания.");
-        }
+        User booker = userRepository.findById(bookerId)
+                .orElseThrow(() -> new NotFoundException(String.format("Пользователь c id=%d не найден.", bookerId)));
         Booking booking = BookingMapper.mapToBooking(newBookingDto, booker, item);
         return mapToBookingDto(bookingRepository.save(booking));
     }
