@@ -3,16 +3,10 @@ package ru.practicum.shareit.user;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.shareit.user.dto.NewUserDto;
-import ru.practicum.shareit.user.dto.UpdUserDto;
 import ru.practicum.shareit.user.dto.UserDto;
-import ru.practicum.shareit.user.dto.UserMapper;
 
 import javax.validation.Valid;
 import java.util.List;
-import java.util.stream.Collectors;
-
-import static ru.practicum.shareit.user.dto.UserMapper.*;
 
 @Slf4j
 @RestController
@@ -27,34 +21,33 @@ public class UserController {
     }
 
     @PostMapping
-    public UserDto add(@Valid @RequestBody NewUserDto newUserDto) {
-        log.info("UserController: POST /users, user={} ", newUserDto);
-        return toUserDto(userService.add(newUserDto));
+    public UserDto add(@Valid @RequestBody UserDto userDto) {
+        log.info("UserController: POST /users, user={} ", userDto);
+        return userService.add(userDto);
     }
 
     @PatchMapping("/{userId}")
-    public UserDto update(@Valid @RequestBody UpdUserDto updUserDto, @PathVariable int userId) {
-        log.info("UserController: PATCH /users/{}, userDto={} ", userId, updUserDto);
-        return toUserDto(userService.update(updUserDto, userId));
+    public UserDto update(@RequestBody UserDto userDto, @PathVariable int userId) {
+        log.info("UserController: PATCH /users/{}, userDto={} ", userId, userDto);
+        userDto.setId(userId);
+        return userService.update(userDto);
     }
 
     @DeleteMapping("/{userId}")
-    public void delete(@Valid @PathVariable int userId) {
+    public void delete(@PathVariable int userId) {
         log.info("UserController: DELETE /users/{}", userId);
         userService.delete(userId);
     }
 
     @GetMapping("/{userId}")
-    public UserDto get(@Valid @PathVariable int userId) {
+    public UserDto get(@PathVariable int userId) {
         log.info("UserController: GET /users/{}", userId);
-        return toUserDto(userService.get(userId));
+        return userService.get(userId);
     }
 
     @GetMapping
     public List<UserDto> getAll() {
         log.info("UserController: GET /users/");
-        return userService.getAll().stream()
-                .map(UserMapper::toUserDto)
-                .collect(Collectors.toList());
+        return userService.getAll();
     }
 }
